@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinolar boshqarish</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: white;
+            min-height: 100vh;
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            max-width: 1100px;
+            margin: auto;
+        }
+        .box {
+            background: #16213e;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #9b59b6;
+        }
+        .box h3 {
+            margin-bottom: 20px;
+            color: #9b59b6;
+        }
+        input {
+            width: 100%;
+            padding: 10px 15px;
+            margin-bottom: 12px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background: #0f3460;
+            color: white;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #9b59b6;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background: #8e44ad; }
+        .btn-delete { background: #e74c3c; }
+        .btn-delete:hover { background: #c0392b; }
+        .kinolar-list {
+            grid-column: 1 / -1;
+            margin-top: 25px;
+        }
+        .kino-card {
+            background: #16213e;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .kino-card img {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .kino-card .info { flex: 1; }
+        .kino-card h4 { color: #9b59b6; margin-bottom: 5px; }
+        .kino-card p { color: #aaa; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <h1>🎬 Kinolarni boshqarish</h1>
+
+    <div class="container">
+        <!-- Kino qo'shish -->
+        <div class="box">
+            <h3>➕ Kino qo'shish</h3>
+            <form action="/qoshish" method="POST">
+                <input type="text" name="nomi" placeholder="Kino nomi" required>
+                <input type="text" name="haqida" placeholder="Kino haqida" required>
+                <input type="text" name="rasm" placeholder="Rasm URL manzili" required>
+                <button type="submit">Qo'shish</button>
+            </form>
+        </div>
+
+        <!-- Kino o'chirish -->
+        <div class="box">
+            <h3>🗑️ Kinoni o'chirish</h3>
+            <form action="/ochirish" method="POST">
+                <input type="number" name="id" placeholder="ID" required>
+                <button type="submit" class="btn-delete">O'chirish</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Kinolar ro'yxati -->
+    <div class="container">
+        <div class="kinolar-list">
+            <h3 style="color: #9b59b6; margin-bottom: 15px;">Bazadagi kinolar</h3>
+            <div id="kinolar"></div>
+        </div>
+    </div>
+
+    <script>
+        // Kinolarni yuklash
+        fetch('/kinolar')
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('kinolar');
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="color: #aaa;">Hozircha kino yo\'q</p>';
+                    return;
+                }
+                data.forEach(kino => {
+                    container.innerHTML += `
+                        <div class="kino-card">
+                            <img src="${kino.rasm}" alt="${kino.nomi}">
+                            <div class="info">
+                                <h4>#${kino.id} - ${kino.nomi}</h4>
+                                <p>${kino.haqida}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+    </script>
+</body>
+</html>
